@@ -1,0 +1,85 @@
+package klimatyzator
+public
+
+	process Proces
+	end Proces;
+
+	process implementation Proces.impl
+	end Proces.impl;
+
+	device Heater
+		features
+			heater_on_off: in event port;
+	end Heater;
+	
+	device AirConditioner
+		features
+			air_conditioner_on_off: in event port;
+	end AirConditioner;
+	
+	device implementation AirConditioner.impl
+	end AirConditioner.impl;
+
+	system HeaterSystem
+	end HeaterSystem;
+
+	system implementation HeaterSystem.impl
+		subcomponents
+			sensor: device TemperatureSensor;
+			heater: device Heater;
+			air_conditioner: device AirConditioner;
+			controller: process ControllerProcess.impl;
+
+		connections
+			temperature_conn: port sensor.temp -> controller.temprature_in;
+			heater_on_off_conn: port controller.heater_on_off -> heater.heater_on_off;
+			air_conditioner_on_off_conn: port controller.air_conditioner_on_off -> air_conditioner.air_conditioner_on_off;
+	end HeaterSystem.impl;
+
+	device implementation Heater.impl
+	end Heater.impl;
+
+	process ControllerProcess
+		features
+			temprature_in: in data port;
+			heater_on_off: out event port;
+			air_conditioner_on_off: out event port;
+	end ControllerProcess;
+
+	thread ReadTemperature
+		features
+			temperature: in data port;
+			digital_temperature: out data port;
+	end ReadTemperature;
+
+	thread implementation ReadTemperature.impl
+	end ReadTemperature.impl;
+
+	thread ControlHeaterThread
+		features
+			digital_temperature: in data port;
+			turn_heater_on_off: out event port;
+			turn_air_conditioner_on_off: out event port;
+	end ControlHeaterThread;
+
+	thread implementation ControlHeaterThread.impl
+	end ControlHeaterThread.impl;
+
+	process implementation ControllerProcess.impl
+		subcomponents
+			read_temperature_thread: thread ReadTemperature;
+			control_heater_thread: thread ControlHeaterThread;
+		connections
+			thread_temperature_in: port temprature_in -> read_temperature_thread.temperature;
+			thread_heater_on_off_out: port control_heater_thread.turn_heater_on_off -> heater_on_off;
+			thread_air_conditioner_on_off_out: port control_heater_thread.turn_air_conditioner_on_off -> air_conditioner_on_off;
+			thread_digital_temperature_conn: port read_temperature_thread.digital_temperature -> control_heater_thread.digital_temperature;
+	end ControllerProcess.impl;
+
+	device TemperatureSensor
+		features
+			temp: out data port;
+	end TemperatureSensor;
+
+
+end klimatyzator;
