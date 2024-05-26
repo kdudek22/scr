@@ -1,0 +1,41 @@
+package producent_konsument
+public
+	with Base_Types;
+
+	system Prod_Consum
+	end Prod_Consum;
+
+	system implementation Prod_Consum.impl
+		subcomponents
+			process1: process proc.impl;
+	end Prod_Consum.impl;
+	
+	thread producent
+		features
+			wstaw: out event port;
+	end producent;
+	
+	thread implementation producent.impl
+	end producent.impl;
+	
+	thread konsument
+		features
+			pobierz: in event port;
+	end konsument;
+	
+	thread implementation konsument.impl
+	end konsument.impl;
+
+	process proc
+	end proc;
+
+	process implementation proc.impl
+		subcomponents
+			producent: thread producent.impl;
+			konsument: thread konsument.impl;
+		connections
+			prod_kons_conn: port producent.wstaw -> konsument.pobierz;
+	end proc.impl;
+	
+	
+end producent_konsument;
