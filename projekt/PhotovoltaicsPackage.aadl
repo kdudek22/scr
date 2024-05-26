@@ -1,0 +1,11 @@
+package PhotovoltaicsPackage
+public
+	system Photovoltaics
+		features
+			power: out data port;
+	end Photovoltaics;
+	
+	system implementation Photovoltaics.impl
+	end Photovoltaics.impl;
+
+end PhotovoltaicsPackage;

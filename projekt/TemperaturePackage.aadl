@@ -1,0 +1,12 @@
+package TemperaturePackage
+public
+	
+	system TemperatureMeasurment
+		features
+			temperature: out data port;
+	end TemperatureMeasurment;
+	
+	system implementation TemperatureMeasurment.impl
+	end TemperatureMeasurment.impl;
+
+end TemperaturePackage;

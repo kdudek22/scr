@@ -1,0 +1,28 @@
+package HeatPumpPackage
+public
+	device Evaporator
+	end Evaporator;
+	
+	device Compressor
+	end Compressor;
+	
+	device Condenser
+	end Condenser;
+	
+	device ExpansionValve
+	end ExpansionValve;
+
+	system HeatPump
+		features
+			temperature: in data port;
+			controls: in data port;
+	end HeatPump;
+	
+	system implementation HeatPump.impl
+		subcomponents
+			evaporator: device Evaporator;
+			compressor: device Compressor;
+			condenser: device Condenser;
+			expansionValve: device ExpansionValve;
+	end HeatPump.impl;
+end HeatPumpPackage;
