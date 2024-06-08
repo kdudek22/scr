@@ -1,0 +1,38 @@
+package SmartHomePackage
+public
+	with ControllerPackage;
+	with HeatPumpPackage;
+	with PhotovoltaicsPackage;
+	with TemperaturePackage;
+	with SharedHardware;
+	
+	system HomeSystem
+	end HomeSystem;
+	
+	device ControllDevice
+	end ControllDevice;
+	
+	system implementation HomeSystem.impl
+		subcomponents
+			heatPump: system HeatPumpPackage::HeatPump.impl;
+			photovoltaics: system PhotovoltaicsPackage::Photovoltaics.impl;
+			temperatureMeasurment: system TemperaturePackage::TemperatureMeasurment.impl;
+			controller: system ControllerPackage::Controller.impl;
+			controllDevice: device ControllDevice;
+			
+			cpu: processor SharedHardware::ARMProcessor.impl;
+			ram: memory SharedHardware::RAM.impl;
+			hdd: memory SharedHardware::HDD.impl;
+			
+			dataBus: bus SharedHardware::DataBus;
+			memoryBus: bus SharedHardware::MemoryBus;
+
+		connections
+			c1: port controller.heatPumpControls -> heatPump.controls;
+			c2: port heatPump.status -> controller.heatPumpStatus;
+			c3: port temperatureMeasurment.temperature -> controller.temperature;
+			c4: port photovoltaics.power -> controller.power;
+			c5: port temperatureMeasurment.temperature -> heatPump.temperature;
+		
+	end HomeSystem.impl;
+end SmartHomePackage;

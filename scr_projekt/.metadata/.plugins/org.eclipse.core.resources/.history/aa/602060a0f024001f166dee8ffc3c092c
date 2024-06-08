@@ -1,0 +1,25 @@
+package SharedHardware
+public
+	
+	processor ARMProcessor
+	end ARMProcessor;
+	
+	processor implementation ARMProcessor.impl
+	end ARMProcessor.impl;
+	
+	memory RAM
+	end RAM;
+	
+	memory implementation RAM.impl
+	end RAM.impl;
+	
+	memory HDD
+	end HDD;
+	
+	memory implementation HDD.impl
+	end HDD.impl;
+	
+	
+	
+
+end SharedHardware;

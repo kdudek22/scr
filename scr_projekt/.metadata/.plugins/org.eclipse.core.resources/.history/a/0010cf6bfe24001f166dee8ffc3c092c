@@ -1,0 +1,67 @@
+package PhotovoltaicsPackage
+public
+	with SharedTypes;
+	with SharedHardware;
+	
+	device SolarPanel
+		features
+			outputDCElectricity: out data port SharedTypes::ElectricityCurrent;
+	end SolarPanel;
+	
+	device Inverter
+		features
+			inputDCElectricy: in data port SharedTypes::ElectricityCurrent;
+			outputACElectricity: out data port SharedTypes::ElectricityCurrent;
+			busAccess: requires bus access SharedHardware::DataBus;
+	end Inverter;
+	
+	system Photovoltaics
+		features
+			power: out data port SharedTypes::Power;
+	end Photovoltaics;
+	
+	process PhotovoltaicsProcess
+		features
+			elctricityAC: in data port SharedTypes::ElectricityCurrent;
+			power: out data port SharedTypes::Power;
+	end PhotovoltaicsProcess;
+	
+	process implementation PhotovoltaicsProcess.impl
+	end PhotovoltaicsProcess.impl;
+	
+	device ControlDevice
+		features
+			power: in data port SharedTypes::Power;
+			busAccess: requires bus access SharedHardware::DataBus;
+	end ControlDevice;
+	
+	system implementation Photovoltaics.impl
+		subcomponents
+			solarPanel: device SolarPanel;
+			inverter: device Inverter;
+			controlDevice: device ControlDevice;
+			
+			cpu: processor SharedHardware::ARMProcessor.impl;
+			ram: memory SharedHardware::RAM.impl;
+			hdd: memory SharedHardware::HDD.impl;
+			
+			dataBus: bus SharedHardware::DataBus;
+			memoryBus: bus SharedHardware::MemoryBus;
+			
+			process1: process PhotovoltaicsProcess.impl;
+			
+		connections
+			c1: port solarPanel.outputDCElectricity -> inverter.inputDCElectricy;
+			c2: bus access memoryBus <-> cpu.mem;
+			c3: bus access memoryBus <-> ram.mem;
+			c4: bus access memoryBus <-> hdd.mem;
+			c5: bus access dataBus <-> cpu.data1;
+			
+			c6: port inverter.outputACElectricity -> process1.elctricityAC;
+			c7: port process1.power -> controlDevice.power;
+			c8: bus access dataBus <-> controlDevice.busAccess;
+			
+			c9: bus access dataBus <-> inverter.busAccess;
+	end Photovoltaics.impl;
+
+end PhotovoltaicsPackage;

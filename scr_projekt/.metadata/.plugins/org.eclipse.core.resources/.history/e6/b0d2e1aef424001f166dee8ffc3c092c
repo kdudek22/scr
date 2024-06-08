@@ -1,0 +1,55 @@
+package TemperaturePackage
+public
+	with SharedTypes;
+	with SharedHardware;
+	
+	bus CommunicationBus
+	end CommunicationBus;
+	
+	device TemperatureSensor
+		features
+			busAccess: requires bus access SharedHardware::DataBus;
+			analogTemperature: out data port SharedTypes::Temperature;
+	end TemperatureSensor;
+	
+	device implementation TemperatureSensor.impl
+	end TemperatureSensor.impl;
+	
+	process TemperatureProcess
+		features
+			analogTemperature: in data port SharedTypes::Temperature;
+			digitalTemperature: out data port SharedTypes::Temperature;
+	end TemperatureProcess;
+	
+	process implementation TemperatureProcess.impl
+		subcomponents
+			thread1: thread TemperatureThread;
+	end TemperatureProcess.impl;
+	
+	thread TemperatureThread
+	end TemperatureThread;
+	
+	system TemperatureMeasurment
+		features
+			temperature: out data port SharedTypes::Temperature;
+	end TemperatureMeasurment;
+	
+	system implementation TemperatureMeasurment.impl
+		subcomponents
+			temperatureSensor: device TemperatureSensor;
+			cpu: processor SharedHardware::ARMProcessor;
+			ram: memory SharedHardware::RAM;
+			dataBus: bus SharedHardware::DataBus;
+			memoryBus: bus SharedHardware::MemoryBus;
+			process1: process TemperatureProcess.impl;
+		connections
+			c1: port process1.digitalTemperature -> temperature;
+			c2: bus access dataBus <-> temperatureSensor.busAccess;
+			c3: bus access memoryBus <-> cpu.mem;
+			c4: bus access memoryBus <-> ram.mem;
+			c5: port temperatureSensor.analogTemperature -> process1.analogTemperature;
+		properties
+			Actual_Connection_Binding => (reference(cpu)) applies to process1;
+	end TemperatureMeasurment.impl;
+
+end TemperaturePackage;

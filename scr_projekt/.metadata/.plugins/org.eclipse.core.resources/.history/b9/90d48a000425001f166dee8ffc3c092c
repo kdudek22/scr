@@ -1,0 +1,100 @@
+package SmartHomePackage
+public
+	with HeatPumpPackage;
+	with PhotovoltaicsPackage;
+	with TemperaturePackage;
+	with SharedHardware;
+	with SharedTypes;
+	
+	system HomeSystem
+	end HomeSystem;
+	
+	device DisplayScreen
+		features
+			busAccess: requires bus access SharedHardware::DataBus;
+	end DisplayScreen;
+	
+	device UserInputDevice
+		features
+			userInput: out data port;
+			busAccess: requires bus access SharedHardware::DataBus;
+	end UserInputDevice;
+	
+--	device CentralOrderDevice
+--		features
+--			power: in data port SharedTypes::Power;
+--			heatPumpStatus: in data port;
+--			temperature: in data port SharedTypes::Temperature;
+--			heatPumpControls: out data port;
+--			busAccess: requires bus access SharedHardware::DataBus;
+--			userSettings: in data port;
+--		
+--	end CentralOrderDevice;
+	
+	process SmartHomeProcess
+		features
+			power: in data port SharedTypes::Power;
+			heatPumpStatus: in data port;
+			temperature: in data port SharedTypes::Temperature;
+			heatPumpControls: out data port;
+			userSettings: in data port;
+	end SmartHomeProcess;
+	
+	device ControlDevice
+		features
+			inHeatPumpControls: in data port;
+			outHeatPumpControls: out data port;
+			busAccess: requires bus access SharedHardware::DataBus;
+	end ControlDevice;
+	
+	process implementation SmartHomeProcess.impl
+		subcomponents
+			thread1: thread SmartHomeThread;
+	end SmartHomeProcess.impl;
+	
+	thread SmartHomeThread
+	end SmartHomeThread;
+	
+	
+	
+	system implementation HomeSystem.impl
+		subcomponents
+			heatPump: system HeatPumpPackage::HeatPump.impl;
+			photovoltaics: system PhotovoltaicsPackage::Photovoltaics.impl;
+			temperatureMeasurment: system TemperaturePackage::TemperatureMeasurment.impl;
+			controllDevice: device ControlDevice;
+			userInputDevice: device UserInputDevice;
+			displayScreen: device DisplayScreen;
+			
+			process1: process SmartHomeProcess;
+			
+			cpu: processor SharedHardware::ARMProcessor.impl;
+			ram: memory SharedHardware::RAM.impl;
+			hdd: memory SharedHardware::HDD.impl;
+			
+			dataBus: bus SharedHardware::DataBus;
+			memoryBus: bus SharedHardware::MemoryBus;
+
+		connections
+			c1: port controllDevice.outHeatPumpControls -> heatPump.controls;
+			
+			c2: port heatPump.status -> process1.heatPumpStatus;
+			c3: port temperatureMeasurment.temperature -> process1.temperature;
+			c4: port photovoltaics.power -> process1.power;
+			c5: port temperatureMeasurment.temperature -> heatPump.temperature;
+			
+			c6: bus access dataBus <-> controllDevice.busAccess;
+			c7: bus access memoryBus <-> cpu.mem;
+			c8: bus access memoryBus <-> ram.mem;
+			c9: bus access memoryBus <-> hdd.mem;
+			c10: bus access dataBus <-> cpu.data1;
+			
+			c11: port userInputDevice.userInput -> process1.userSettings;
+			c12: bus access dataBus <-> userInputDevice.busAccess;
+		
+			c13: bus access dataBus <-> displayScreen.busAccess;
+			
+			c14: port process1.heatPumpControls -> controllDevice.inHeatPumpControls;
+
+	end HomeSystem.impl;
+end SmartHomePackage;
