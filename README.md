@@ -6,7 +6,7 @@ opiera na zbieraniu danych z podsystemów:
 - pompy ciepła - dostarcza informacje o aktualnym stanie pompy ciepła i zużyciu energii
 - fotowoltaiki - przekazuje informacje o aktualnej mocy produkcji energii
 
-![smartHome.png](..%2Fpolicja%2FsmartHome.png)
+![smartHome.png](scr_projekt/images/smartHome.png)
 
 Na podstawie zebranych danych i ustawień użytkownika system steruje pompą ciepła. Pozwala to na lepsze zagospodarowanie 
 energią w domu, wygodniejsze sterowanie pompą ciepła.
