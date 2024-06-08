@@ -1,0 +1,26 @@
+package SmartHomePackage
+public
+	with ControllerPackage;
+	with HeatPumpPackage;
+	with PhotovoltaicsPackage;
+	with TemperaturePackage;
+	
+	system HomeSystem
+	end HomeSystem;
+	
+	system implementation HomeSystem.impl
+		subcomponents
+			heatPump: system HeatPumpPackage::HeatPump.impl;
+			photovoltaics: system PhotovoltaicsPackage::Photovoltaics.impl;
+			temperatureMeasurment: system TemperaturePackage::TemperatureMeasurment.impl;
+			controller: system ControllerPackage::Controller.impl;
+
+		connections
+			c1: port controller.heatPumpControls -> heatPump.controls;
+			c2: port heatPump.status -> controller.heatPumpStatus;
+			c3: port temperatureMeasurment.temperature -> controller.temperature;
+			c4: port photovoltaics.power -> controller.power;
+			c5: port temperatureMeasurment.temperature -> heatPump.temperature;
+		
+	end HomeSystem.impl;
+end SmartHomePackage;

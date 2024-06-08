@@ -1,0 +1,54 @@
+package HeatPumpPackage
+public
+	with SharedHardware;
+	with SharedTypes;
+
+	device Evaporator
+	end Evaporator;
+	
+	device Compressor
+	end Compressor;
+	
+	device Condenser
+	end Condenser;
+	
+	device ExpansionValve
+	end ExpansionValve;
+	
+	process heatPumpProcess
+	end heatPumpProcess;
+	
+	process implementation heatPumpProcess.impl
+	end heatPumpProcess.impl;
+
+	system HeatPump
+		features
+			temperature: in data port SharedTypes::Temperature;
+			controls: in data port;
+			status: out data port;
+	end HeatPump;
+	
+	system implementation HeatPump.impl
+		subcomponents
+			evaporator: device Evaporator;
+			compressor: device Compressor;
+			condenser: device Condenser;
+			expansionValve: device ExpansionValve;
+			
+			cpu: processor SharedHardware::ARMProcessor.impl;
+			ram: memory SharedHardware::RAM.impl;
+			hdd: memory SharedHardware::HDD.impl;
+			
+			dataBus: bus SharedHardware::DataBus;
+			memoryBus: bus SharedHardware::MemoryBus;
+			
+			heatPumpProcess: process heatPumpProcess.impl;
+			
+		connections
+			c1: bus access memoryBus <-> cpu.mem;
+			c2: bus access memoryBus <-> ram.mem;
+			c3: bus access memoryBus <-> hdd.mem;
+
+	end HeatPump.impl;
+
+end HeatPumpPackage;

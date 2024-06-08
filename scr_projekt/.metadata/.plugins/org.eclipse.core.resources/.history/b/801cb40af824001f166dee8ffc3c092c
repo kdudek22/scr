@@ -1,0 +1,84 @@
+package HeatPumpPackage
+public
+	with SharedHardware;
+	with SharedTypes;
+
+	device Evaporator
+		features
+			busAccess: requires bus access SharedHardware::DataBus;
+			temperature: out data port SharedTypes::Temperature;
+	end Evaporator;
+	
+	device Compressor
+		features
+			busAccess: requires bus access SharedHardware::DataBus;
+			pressure: out data port SharedTypes::Pressure;
+	end Compressor;
+	
+	device Condenser
+		features
+			busAccess: requires bus access SharedHardware::DataBus;
+			heatFlow: out data port SharedTypes::Power;
+	end Condenser;
+	
+	device ExpansionValve
+		features
+			busAccess: requires bus access SharedHardware::DataBus;
+			temperature: out data port SharedTypes::Temperature;
+	end ExpansionValve;
+	
+	process heatPumpProcess
+		features
+			evaporatorTemperature: in data port SharedTypes::Temperature;
+			compressorPressure: in data port;
+			condenserHeatFlow: in data port SharedTypes::Power;
+			expansionValveTemperature: in data port SharedTypes::Temperature;
+	end heatPumpProcess;
+	
+	process implementation heatPumpProcess.impl
+	end heatPumpProcess.impl;
+
+	system HeatPump
+		features
+			temperature: in data port SharedTypes::Temperature;
+			controls: in data port;
+			status: out data port;
+	end HeatPump;
+	
+	system implementation HeatPump.impl
+		subcomponents
+			evaporator: device Evaporator;
+			compressor: device Compressor;
+			condenser: device Condenser;
+			expansionValve: device ExpansionValve;
+			
+			cpu: processor SharedHardware::ARMProcessor.impl;
+			ram: memory SharedHardware::RAM.impl;
+			hdd: memory SharedHardware::HDD.impl;
+			
+			dataBus: bus SharedHardware::DataBus;
+			memoryBus: bus SharedHardware::MemoryBus;
+			
+			process1: process heatPumpProcess.impl;
+			
+		connections
+			c1: bus access memoryBus <-> cpu.mem;
+			c2: bus access memoryBus <-> ram.mem;
+			c3: bus access memoryBus <-> hdd.mem;
+			c4: bus access dataBus <-> evaporator.busAccess;
+			c5: bus access dataBus <-> compressor.busAccess;
+			c6: bus access dataBus <-> condenser.busAccess;
+			c7: bus access dataBus <-> expansionValve.busAccess;
+			c8: bus access dataBus <-> cpu.data1;
+
+			c9: port evaporator.temperature -> process1.evaporatorTemperature;
+			c10: port compressor.pressure -> process1.compressorPressure;
+			c11: port condenser.heatFlow -> process1.condenserHeatFlow;
+			c12: port expansionValve.temperature -> process1.evaporatorTemperature;
+			
+		properties
+			Actual_Connection_Binding => (reference(cpu)) applies to process1;
+
+	end HeatPump.impl;
+
+end HeatPumpPackage;

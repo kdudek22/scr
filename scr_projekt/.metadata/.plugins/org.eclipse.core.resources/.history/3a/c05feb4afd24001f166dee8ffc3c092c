@@ -1,0 +1,25 @@
+package SharedTypes
+public
+	with Data_Model;
+	
+	data Temperature
+		properties
+			Data_Model::Data_Representation => Float;
+   	end Temperature;
+   	
+   	data Pressure
+   		properties
+			Data_Model::Data_Representation => Float;
+   	end Pressure;
+   	
+   	data Power
+   		properties
+			Data_Model::Data_Representation => Float;
+   	end Power;
+   	
+   	data Energy
+   		properties
+			Data_Model::Data_Representation => Float;
+   	end Energy;
+	
+end SharedTypes;

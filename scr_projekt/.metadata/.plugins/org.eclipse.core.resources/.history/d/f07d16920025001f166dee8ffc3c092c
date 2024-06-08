@@ -1,0 +1,30 @@
+package ControllerPackage
+public
+	with SharedHardware;
+	with SharedTypes;
+	
+	process ControllerProcess
+	end ControllerProcess;
+	
+	process implementation ControllerProcess.impl
+	end ControllerProcess.impl;
+
+	system Controller
+		features
+			temperature: in data port SharedTypes::Temperature;
+			heatPumpControls: out data port;
+			heatPumpStatus: in data port;
+			power: in data port SharedTypes::Power;
+			
+	end Controller;
+	
+	system implementation Controller.impl
+		subcomponents
+			cpu: processor SharedHardware::ARMProcessor.impl;
+			ram: memory SharedHardware::RAM.impl;
+			hdd: memory SharedHardware::HDD.impl;
+
+			controllerProcess: process ControllerProcess.impl;
+
+	end Controller.impl;
+end ControllerPackage;

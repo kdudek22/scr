@@ -1,0 +1,39 @@
+package SharedHardware
+public
+	
+	
+	bus MemoryBus
+	end MemoryBus;
+	
+	bus DataBus
+	end DataBus;
+	
+	processor ARMProcessor
+		features
+			mem: requires bus access MemoryBus;
+		properties
+			Scheduling_Protocol => (Round_Robin_Protocol);
+   			Clock_Period => 3 ms;
+	end ARMProcessor;
+	
+	processor implementation ARMProcessor.impl
+	end ARMProcessor.impl;
+	
+	memory RAM
+		features
+			mem: requires bus access MemoryBus;
+	end RAM;
+	
+	memory implementation RAM.impl
+	end RAM.impl;
+	
+	memory HDD
+	end HDD;
+	
+	memory implementation HDD.impl
+	end HDD.impl;
+	
+	
+	
+
+end SharedHardware;

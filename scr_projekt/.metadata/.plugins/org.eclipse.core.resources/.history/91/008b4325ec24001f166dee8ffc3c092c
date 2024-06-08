@@ -1,0 +1,12 @@
+package TemperaturePackage
+public
+	with SharedTypes;
+	
+	system TemperatureMeasurment
+		features
+			temperature: out data port SharedTypes::Temperature;
+	end TemperatureMeasurment;
+	
+	system implementation TemperatureMeasurment.impl
+	end TemperatureMeasurment.impl;
+end TemperaturePackage;

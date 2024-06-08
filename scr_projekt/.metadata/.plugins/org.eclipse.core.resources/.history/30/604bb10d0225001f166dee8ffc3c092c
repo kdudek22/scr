@@ -1,0 +1,59 @@
+package SmartHomePackage
+public
+	with HeatPumpPackage;
+	with PhotovoltaicsPackage;
+	with TemperaturePackage;
+	with SharedHardware;
+	with SharedTypes;
+	
+	system HomeSystem
+	end HomeSystem;
+	
+	device UserInputDevice
+		features
+			userInput: out data port;
+			busAccess: requires bus access SharedHardware::DataBus;
+	end UserInputDevice;
+	
+	device CentralOrderDevice
+		features
+			power: in data port SharedTypes::Power;
+			heatPumpStatus: in data port;
+			temperature: in data port SharedTypes::Temperature;
+			heatPumpControls: out data port;
+			busAccess: requires bus access SharedHardware::DataBus;
+			userSettings: in data port;
+			
+	end CentralOrderDevice;
+	
+	system implementation HomeSystem.impl
+		subcomponents
+			heatPump: system HeatPumpPackage::HeatPump.impl;
+			photovoltaics: system PhotovoltaicsPackage::Photovoltaics.impl;
+			temperatureMeasurment: system TemperaturePackage::TemperatureMeasurment.impl;
+			controllDevice: device CentralOrderDevice;
+			userInputDevice: device UserInputDevice;
+			cpu: processor SharedHardware::ARMProcessor.impl;
+			ram: memory SharedHardware::RAM.impl;
+			hdd: memory SharedHardware::HDD.impl;
+			
+			dataBus: bus SharedHardware::DataBus;
+			memoryBus: bus SharedHardware::MemoryBus;
+
+		connections
+			c1: port controllDevice.heatPumpControls -> heatPump.controls;
+			c2: port heatPump.status -> controllDevice.heatPumpStatus;
+			c3: port temperatureMeasurment.temperature -> controllDevice.temperature;
+			c4: port photovoltaics.power -> controllDevice.power;
+			c5: port temperatureMeasurment.temperature -> heatPump.temperature;
+			
+			c6: bus access dataBus <-> controllDevice.busAccess;
+			c7: bus access memoryBus <-> cpu.mem;
+			c8: bus access memoryBus <-> ram.mem;
+			c9: bus access memoryBus <-> hdd.mem;
+			c10: bus access dataBus <-> cpu.data1;
+			
+			c11: port userInputDevice.userInput -> controllDevice.userSettings;
+		
+	end HomeSystem.impl;
+end SmartHomePackage;

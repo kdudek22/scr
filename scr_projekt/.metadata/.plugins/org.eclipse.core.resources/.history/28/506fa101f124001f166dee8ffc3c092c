@@ -1,0 +1,25 @@
+package TemperaturePackage
+public
+	with SharedTypes;
+	
+	device TemperatureSensor
+		features
+			temperature: out data port SharedTypes::Temperature;
+	end TemperatureSensor;
+	
+	device implementation TemperatureSensor.impl
+	end TemperatureSensor.impl;
+	
+	system TemperatureMeasurment
+		features
+			temperature: out data port SharedTypes::Temperature;
+	end TemperatureMeasurment;
+	
+	system implementation TemperatureMeasurment.impl
+		subcomponents
+			temperatureSensor: device TemperatureSensor;
+		connections
+			c1: port temperatureSensor.temperature -> temperature;
+	end TemperatureMeasurment.impl;
+
+end TemperaturePackage;
